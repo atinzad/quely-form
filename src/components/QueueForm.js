@@ -20,8 +20,16 @@ const QueueForm = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    memberStore.addMember(queue, newMember);
-    navigate("/");
+    if (queue.isEmailRequired && !newMember.email) {
+      alert("email is requred");
+    } else {
+      if (queue.isPhoneRequired && !newMember.phone) {
+        alert("phone is requred");
+      } else {
+        memberStore.addMember(queue, newMember);
+        navigate("/");
+      }
+    }
   };
   const queues = queueStore.queues;
   const queue = queues.find((queue) => queue._id === queueId);
@@ -34,20 +42,26 @@ const QueueForm = () => {
       ) : (
         <>
           <h1>Welcome to: {queue.name}</h1>
-          <input
-            type="text"
-            name="email"
-            onChange={handleChange}
-            placeholder="email"
-            className="form-control my-3"
-          />
-          <input
-            type="text"
-            name="phone"
-            onChange={handleChange}
-            placeholder="phone"
-            className="form-control my-3"
-          />
+
+          {queue.isEmailAvailable && (
+            <input
+              type="text"
+              name="email"
+              onChange={handleChange}
+              placeholder={queue.isEmailRequired ? "email (required)" : "email"}
+              className="form-control my-3"
+            />
+          )}
+
+          {queue.isPhoneAvailable && (
+            <input
+              type="text"
+              name="phone"
+              onChange={handleChange}
+              placeholder={queue.isPhoneRequired ? "phone (required)" : "phone"}
+              className="form-control my-3"
+            />
+          )}
           <button onClick={handleSubmit}>Button</button>
         </>
       )}
