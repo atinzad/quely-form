@@ -55,22 +55,24 @@ const QueueForm = () => {
           <h1 style={{ color: "white" }}>Welcome to {queue.name}</h1>
 
           {queue.isEmailAvailable && (
-          <input
-            alignItems="center"
-            type="text"
-            name="Email"
-            onChange={handleChange}
-            placeholder={queue.isEmailRequired ? "email (required)" : "email"}
-            className="form-control my-3"
-          />
+            <input
+              alignItems="center"
+              type="text"
+              name="email"
+              onChange={handleChange}
+              placeholder={queue.isEmailRequired ? "email (required)" : "email"}
+              className="form-control my-3"
+            />
           )}
 
-           {queue.isPhoneAvailable && <PhoneInput
-            country={"us"}
-            value={newMember.phone}
-            placeholder={queue.isPhoneRequired ? "phone (required)" : "phone"}
-            onChange={(phone) => setMember({ ...newMember, phone: phone })}
-          />}
+          {queue.isPhoneAvailable && (
+            <PhoneInput
+              country={"kw"}
+              value={newMember.phone}
+              placeholder={queue.isPhoneRequired ? "phone (required)" : "phone"}
+              onChange={(phone) => setMember({ ...newMember, phone: phone })}
+            />
+          )}
           <button className="btn btn-warning" onClick={handleSubmit}>
             Submit
           </button>
