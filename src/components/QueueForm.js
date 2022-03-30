@@ -11,7 +11,14 @@ import { Container } from "react-bootstrap";
 const QueueForm = () => {
   const { queueId } = useParams();
   const [newMember, setMember] = useState({});
+  const queues = queueStore.queues;
+  const queue = queues.find((queue) => queue._id === queueId);
   const navigate = useNavigate();
+
+  console.log("queue", queue);
+  const [fieldValues, setFieldValues] = useState(
+    Object.assign({}, ...queue.fields.map((key) => ({ [key]: "" })))
+  );
 
   if (queueStore.loading) {
     return <div>loading...</div>;
@@ -21,20 +28,35 @@ const QueueForm = () => {
     setMember({ ...newMember, [event.target.name]: event.target.value });
   };
 
+  const handleFieldChange = (e, field) => {
+    console.log("ddddd", e.target.value, field);
+    setFieldValues({ ...fieldValues, [field]: e.target.value });
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
+    setMember(newMember);
     if (queue.isEmailRequired && !newMember.email) {
       alert("email is requred");
     } else {
       if (queue.isPhoneRequired && !newMember.phone) {
         alert("phone is requred");
       } else {
-        memberStore.addMember(queue, newMember, navigate);
+        memberStore.addMember(queue, newMember, fieldValues, navigate);
       }
     }
   };
-  const queues = queueStore.queues;
-  const queue = queues.find((queue) => queue._id === queueId);
+
+  const fields = queue.fields.map((field) => (
+    <input
+      alignItems="center"
+      type="text"
+      name={field}
+      onChange={(e) => handleFieldChange(e, field)}
+      placeholder={field}
+      className="form-control my-3"
+    />
+  ));
 
   return (
     <Container
@@ -73,6 +95,7 @@ const QueueForm = () => {
               onChange={(phone) => setMember({ ...newMember, phone: phone })}
             />
           )}
+          {fields}
           <button className="btn btn-warning" onClick={handleSubmit}>
             Submit
           </button>
