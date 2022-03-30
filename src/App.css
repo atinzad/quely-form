@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  min-height: 100vh;
+  background-color: "lightblue";
 }
 
 .App-logo {
@@ -26,6 +28,11 @@
 
 .App-link {
   color: #61dafb;
+}
+
+.phone {
+  width: 28%;
+  padding: 6%;
 }
 
 @keyframes App-logo-spin {
