@@ -7,11 +7,14 @@ class MemberStore {
     makeAutoObservable(this);
   }
 
-  addMember = async (queue, newMember) => {
+  addMember = async (queue, newMember, navigate) => {
     try {
       newMember.queue = queue._id;
 
       const response = await instance.post("/members", newMember);
+      this.member = response.data.payload;
+      console.log("dataaa");
+      navigate("/Confirmation");
 
       console.log(response);
     } catch (error) {
