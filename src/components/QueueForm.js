@@ -1,6 +1,6 @@
 import { Button } from "bootstrap";
 import { observer } from "mobx-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import memberStore from "../stores/memberStore";
 import queueStore from "../stores/queueStore";
@@ -11,13 +11,21 @@ import { Container } from "react-bootstrap";
 const QueueForm = () => {
   const { queueId } = useParams();
   const [newMember, setMember] = useState({});
+
+  // useEffect(async () => {
+  //   console.log("first");
+  //   await queueStore.fetchQueues();
+  // }, []);
+
   const queues = queueStore.queues;
-  const queue = queues.find((queue) => queue._id === queueId);
+  const queue = queues?.find((queue) => queue._id == queueId);
   const navigate = useNavigate();
 
   console.log("queue", queue);
   const [fieldValues, setFieldValues] = useState(
-    Object.assign({}, ...queue.fields.map((key) => ({ [key]: "" })))
+    queue
+      ? Object.assign({}, ...queue.fields.map((key) => ({ [key]: "" })))
+      : {}
   );
 
   if (queueStore.loading) {
@@ -29,14 +37,13 @@ const QueueForm = () => {
   };
 
   const handleFieldChange = (e, field) => {
-    console.log("ddddd", e.target.value, field);
     setFieldValues({ ...fieldValues, [field]: e.target.value });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     setMember(newMember);
-    if (queue.isEmailRequired && !newMember.email) {
+    if (queue?.isEmailRequired && !newMember.email) {
       alert("email is requred");
     } else {
       if (queue.isPhoneRequired && !newMember.phone) {
@@ -47,16 +54,20 @@ const QueueForm = () => {
     }
   };
 
-  const fields = queue.fields.map((field) => (
-    <input
-      alignItems="center"
-      type="text"
-      name={field}
-      onChange={(e) => handleFieldChange(e, field)}
-      placeholder={field}
-      className="form-control my-3"
-    />
-  ));
+  const fields = queue.fields
+    ? queue.fields.map((field) => {
+        return (
+          <input
+            alignItems="center"
+            type="text"
+            name={field}
+            onChange={(e) => handleFieldChange(e, field)}
+            placeholder={field}
+            className="form-control my-3"
+          />
+        );
+      })
+    : "";
 
   return (
     <Container
